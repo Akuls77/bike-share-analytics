@@ -13,3 +13,6 @@ dbt/dbt_packages/
 
 # Env
 .env
+
+# Data
+data/raw_csv/*.csv
