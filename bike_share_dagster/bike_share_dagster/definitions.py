@@ -9,7 +9,7 @@ ingestion_job = define_asset_job(
 
 ingestion_schedule = ScheduleDefinition(
     job = ingestion_job,
-    cron_schedule = "30 10 * * *"
+    cron_schedule = "0 * * * *"
 )
 
 @sensor(job = ingestion_job, default_status = DefaultSensorStatus.RUNNING)
