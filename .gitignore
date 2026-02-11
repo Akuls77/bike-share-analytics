@@ -16,3 +16,6 @@ dbt/dbt_packages/
 
 # Data
 data/raw_csv/*.csv
+
+.tmp_dagster_home_*/
+*.db
