@@ -117,33 +117,6 @@ The mart layer uses incremental models:
 
 ---
 
-## Project Structure
-
-Bike-Share-Analytics/
-│
-├── bike_share_dagster/
-│ ├── assets.py
-│ ├── definitions.py
-│
-├── dbt/
-│ └── bike_share_dbt/
-│ ├── models/
-│ │ ├── staging/
-│ │ ├── intermediate/
-│ │ └── marts/
-│ ├── tests/
-│ ├── macros/
-│ └── dbt_project.yml
-│
-├── data/
-│ └── raw_csv/
-│
-├── requirements.txt
-└── README.md
-
-
----
-
 ## How to Run Locally
 
 ### 1. Clone the repository
@@ -165,15 +138,15 @@ pip install -r requirements.txt
 
 ### 4. Configure Environment Variables
 
-Create a `.env` file:
-
-SNOWFLAKE_ACCOUNT=...
-SNOWFLAKE_USER=...
-SNOWFLAKE_PASSWORD=...
-SNOWFLAKE_ROLE=...
-SNOWFLAKE_WAREHOUSE=...
-SNOWFLAKE_DATABASE=...
+```env
+SNOWFLAKE_ACCOUNT=your_account
+SNOWFLAKE_USER=your_username
+SNOWFLAKE_PASSWORD=your_password
+SNOWFLAKE_ROLE=your_role
+SNOWFLAKE_WAREHOUSE=your_warehouse
+SNOWFLAKE_DATABASE=your_database
 SNOWFLAKE_SCHEMA=RAW
+```
 
 
 ### 5. Generate dbt Manifest
@@ -206,16 +179,3 @@ The mart layer enables:
 - Station popularity and route frequency
 - Bike utilization and maintenance insights
 - Ride duration distribution analysis
-
----
-
-## Production Considerations
-
-This implementation includes:
-
-- Incremental modeling strategy
-- Event-driven orchestration
-- Layered warehouse architecture
-- Business-rule validation via singular tests
-- Reproducible local setup
-- Version-controlled codebase
