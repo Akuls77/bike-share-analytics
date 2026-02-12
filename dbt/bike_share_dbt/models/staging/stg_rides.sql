@@ -22,6 +22,7 @@ renamed as (
         "gender"::integer                     as gender,
         "trip_duration_in_min"::integer       as trip_duration_in_min
     from source
+    where stop_at >= start_at
 )
 
 select * from renamed
