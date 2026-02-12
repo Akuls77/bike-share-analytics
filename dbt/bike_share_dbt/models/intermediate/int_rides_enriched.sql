@@ -36,15 +36,8 @@ derived as (
             else null
         end as rider_age,
 
-        -- age bucket
-        case
-            when birth_year is null then 'Unknown'
-            when year(current_date) - birth_year < 18 then '<18'
-            when year(current_date) - birth_year between 18 and 25 then '18-25'
-            when year(current_date) - birth_year between 26 and 40 then '26-40'
-            when year(current_date) - birth_year between 41 and 60 then '41-60'
-            else '60+'
-        end as age_group,
+        -- age bucket macro
+        {{ age_bucket('birth_year') }} as age_group,
 
         -- station info
         start_station_id,
