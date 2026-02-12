@@ -29,7 +29,8 @@ def raw_bike_rides():
 
     csv_path = r"C:\Bike-Share-Analytics\data\raw_csv\NYC-BikeShare-2015-2017-combined.csv"
     df = pd.read_csv(csv_path, index_col=0)
-
+    df["ingested_at"] = pd.Timestamp.utcnow()
+    
     df.columns = [c.lower().replace(" ", "_") for c in df.columns]
 
 

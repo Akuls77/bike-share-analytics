@@ -22,13 +22,16 @@ ingestion_schedule = ScheduleDefinition(
 def ingestion_success_sensor(context):
     runs = context.instance.get_runs(
         filters=RunsFilter(job_name="bike_ingestion_job"),
-        limit=5,
+        limit=1,
     )
 
-    for run in runs:
-        if run.status.value == "SUCCESS":
-            yield RunRequest(run_key=f"ingestion-{run.run_id}")
-            return
+    if not runs:
+        return
+
+    latest_run = runs[0]
+
+    if latest_run.status.value == "SUCCESS":
+        yield RunRequest(run_key=latest_run.run_id)
 
 defs = Definitions(
     assets=[raw_bike_rides, bike_share_dbt_assets],
