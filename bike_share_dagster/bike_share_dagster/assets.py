@@ -5,6 +5,9 @@ import os
 from dotenv import load_dotenv
 from snowflake.connector.pandas_tools import write_pandas
 
+from dagster_dbt import DbtCliResource, dbt_assets
+from pathlib import Path
+
 load_dotenv()
 
 @asset
@@ -40,3 +43,12 @@ def raw_bike_rides():
 
     conn.close()
     return f"Loaded {nrows} rows"
+
+
+DBT_PROJECT_DIR = Path(__file__).resolve().parent.parent.parent / "dbt" / "bike_share_dbt"
+
+dbt_resource = DbtCliResource(project_dir=DBT_PROJECT_DIR)
+
+@dbt_assets(manifest=DBT_PROJECT_DIR / "target" / "manifest.json")
+def bike_share_dbt_assets(context, dbt: DbtCliResource):
+    yield from dbt.cli(["build"], context=context).stream()
