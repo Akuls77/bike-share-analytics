@@ -1,38 +1,56 @@
-from dagster import asset
+from pathlib import Path
+import os
 import pandas as pd
 import snowflake.connector
-import os
-from dotenv import load_dotenv
-from snowflake.connector.pandas_tools import write_pandas
 
-from dagster_dbt import DbtCliResource, dbt_assets
-from pathlib import Path
+from dagster import asset
+from dagster_dbt import dbt_assets, DbtCliResource
 
-load_dotenv()
 
-@asset
+# DBT CONFIG
+DBT_PROJECT_DIR = Path("C:/Bike-Share-Analytics/dbt/bike_share_dbt")
+DBT_PROFILES_DIR = Path(os.path.expanduser("~")) / ".dbt"
+
+dbt_resource = DbtCliResource(
+    project_dir=DBT_PROJECT_DIR,
+    profiles_dir=DBT_PROFILES_DIR,
+)
+
+# RAW INGESTION ASSET
+@asset(
+    name="raw_bike_rides",
+    group_name="raw_layer",
+)
 def raw_bike_rides():
+    """
+    Loads static CSV data into Snowflake RAW schema.
+    This is ingestion only — no transformations.
+    """
+
+    DATA_FILE_PATH = Path(
+        "C:/Bike-Share-Analytics/data/raw_csv/NYC-BikeShare-2015-2017-combined.csv"
+    )
+
+    if not DATA_FILE_PATH.exists():
+        raise FileNotFoundError(f"CSV file not found at {DATA_FILE_PATH}")
+
+    df = pd.read_csv(DATA_FILE_PATH).reset_index(drop=True)
+
     conn = snowflake.connector.connect(
-        account=os.getenv("SNOWFLAKE_ACCOUNT"),
         user=os.getenv("SNOWFLAKE_USER"),
         password=os.getenv("SNOWFLAKE_PASSWORD"),
-        role=os.getenv("SNOWFLAKE_ROLE"),
+        account=os.getenv("SNOWFLAKE_ACCOUNT"),
         warehouse=os.getenv("SNOWFLAKE_WAREHOUSE"),
         database=os.getenv("SNOWFLAKE_DATABASE"),
-        schema=os.getenv("SNOWFLAKE_SCHEMA"),
+        schema="RAW"
     )
 
     cursor = conn.cursor()
-    cursor.execute(f"USE WAREHOUSE {os.getenv('SNOWFLAKE_WAREHOUSE')}")
-    cursor.execute(f"USE DATABASE {os.getenv('SNOWFLAKE_DATABASE')}")
-    cursor.execute(f"USE SCHEMA {os.getenv('SNOWFLAKE_SCHEMA')}")
 
-    csv_path = r"C:\Bike-Share-Analytics\data\raw_csv\NYC-BikeShare-2015-2017-combined.csv"
-    df = pd.read_csv(csv_path, index_col=0)
-    df["ingested_at"] = pd.Timestamp.utcnow()
-    
-    df.columns = [c.lower().replace(" ", "_") for c in df.columns]
+    cursor.execute("CREATE SCHEMA IF NOT EXISTS RAW")
 
+    # Let write_pandas handle table creation
+    from snowflake.connector.pandas_tools import write_pandas
 
     success, nchunks, nrows, _ = write_pandas(
         conn,
@@ -42,14 +60,21 @@ def raw_bike_rides():
         overwrite=True
     )
 
+    cursor.close()
     conn.close()
-    return f"Loaded {nrows} rows"
+
+    if not success:
+        raise Exception("Failed to load RAW_BIKE_RIDES")
+
+    return f"Loaded {nrows} rows into RAW.RAW_BIKE_RIDES"
 
 
-DBT_PROJECT_DIR = Path(__file__).resolve().parent.parent.parent / "dbt" / "bike_share_dbt"
-
-dbt_resource = DbtCliResource(project_dir=DBT_PROJECT_DIR)
-
-@dbt_assets(manifest=DBT_PROJECT_DIR / "target" / "manifest.json")
+# DBT TRANSFORMATION ASSET
+@dbt_assets(
+    manifest=DBT_PROJECT_DIR / "target" / "manifest.json",
+)
 def bike_share_dbt_assets(context, dbt: DbtCliResource):
+    """
+    Runs full dbt build across STAGING → INTERMEDIATE → MART
+    """
     yield from dbt.cli(["build"], context=context).stream()

@@ -1,8 +1,8 @@
 version: 2
 
 sources:
-  - name: raw
+  - name: bike_raw
     database: BIKE_SHARE_DB
     schema: RAW
     tables:
-      - name: raw_bike_rides
+      - name: RAW_BIKE_RIDES

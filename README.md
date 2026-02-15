@@ -1,181 +1,129 @@
-# Bike Share Analytics Pipeline
+# Bike Share Analytics Platform
 
 ## Overview
 
-This project implements a production-style data engineering pipeline for analyzing public bike share ride data using:
+Bike Share Analytics is a modern data engineering pipeline built using:
 
-- Snowflake as the cloud data warehouse
-- dbt Core for data transformation
-- Dagster for orchestration (schedules + sensors)
+- Dagster (Orchestration)
+- dbt (Transformation)
+- Snowflake (Data Warehouse)
+- Pandas (Ingestion)
 
-The pipeline follows a layered warehouse architecture:
-
-RAW → STAGING → INTERMEDIATE → MART
-
-It is designed to be reproducible, modular, and automation-ready.
+The platform ingests raw NYC Bike Share CSV data, loads it into Snowflake, and transforms it into analytics-ready marts using a layered architecture.
 
 ---
 
 ## Architecture
 
-### High-Level Flow
+### Data Flow
 
-1. Hourly schedule triggers ingestion of raw CSV data into Snowflake (RAW schema).
-2. A Dagster sensor detects successful ingestion.
-3. dbt executes transformation models (run + test).
-4. Incremental mart tables are updated.
-5. Data quality tests validate structural and business rules.
-
-### Layered Data Model
-
-- **RAW Schema**
-  - Stores ingested bike ride data from CSV
-  - Append-safe ingestion with ingestion timestamp
-
-- **STAGING Layer (stg_*)**
-  - Column standardization
-  - Type casting
-  - Data cleaning
-  - Business rule enforcement (e.g., valid time sequence)
-
-- **INTERMEDIATE Layer (int_*)**
-  - Enrichment logic
-  - Derived columns
-  - Aggregation preparation
-
-- **MART Layer (fact_*, dim_*)**
-  - Analytics-ready tables
-  - Incremental fact models
-  - Aggregated business metrics
+1. Raw CSV ingestion via Dagster
+2. Load into Snowflake RAW schema
+3. dbt transforms data across:
+   - STAGING layer
+   - INTERMEDIATE layer
+   - MART layer
+4. Data quality tests executed via dbt
+5. Orchestrated end-to-end using Dagster asset jobs
 
 ---
 
-## Orchestration Design
+## Layered Data Model
 
-### Schedule-Based Ingestion
+### RAW Layer
+- Ingests CSV data directly into Snowflake
+- No transformations applied
+- Schema: `RAW`
 
-Dagster schedule:
-0 * * * *
+### STAGING Layer
+- Cleans and standardizes columns
+- Applies type casting
+- Performs basic validation
+- Schema: `STAGING`
 
+### INTERMEDIATE Layer
+- Enriches data
+- Applies business logic
+- Schema: `INTERMEDIATE`
 
-Runs hourly:
-- Executes `bike_ingestion_job`
-- Loads raw data into Snowflake
-
-### Sensor-Driven Transformation
-
-A Dagster sensor:
-- Monitors successful ingestion runs
-- Triggers `bike_full_pipeline`
-- Executes `dbt build` (models + tests)
-
-This ensures:
-- Time-based ingestion
-- Event-driven transformation
-- Decoupled execution stages
+### MART Layer
+- Aggregated fact tables
+- Analytics-ready datasets
+- Schema: `MART`
 
 ---
 
 ## Data Quality
 
-### Schema Tests
+dbt tests include:
 
-Implemented using dbt schema tests:
-- not_null
-- unique
-- accepted_values
-- relationships
+- Not null constraints
+- Accepted value checks
+- Logical validations (e.g., stop_time >= start_time)
+- Business rule validations (e.g., no negative rides)
 
-### Singular Tests
+All transformations run with:
 
-Custom business rule validations:
-- Trip duration must be positive
-- Stop time must be after start time
-- No future ride timestamps
+dbt build
 
-Staging layer enforces corrections where appropriate.
 
 ---
 
-## Incremental Modeling
+## Running the Project
 
-The mart layer uses incremental models:
+### 1. Activate Virtual Environment
 
-- Prevents full table rebuilds
-- Processes only new ride dates
-- Reduces compute cost
-- Improves scalability
-
----
-
-## Snowflake Configuration
-
-- Dedicated warehouse with auto suspend
-- Separate schemas for RAW, STAGING, MART
-- Role-based access control
-- Append-safe ingestion strategy
-
----
-
-## How to Run Locally
-
-### 1. Clone the repository
-
-git clone <repository_url>
-cd Bike-Share-Analytics
-
-
-### 2. Create virtual environment
-
-python -m venv venv
 venv\Scripts\activate
 
 
-### 3. Install dependencies
-
-pip install -r requirements.txt
-
-
-### 4. Configure Environment Variables
-
-```env
-SNOWFLAKE_ACCOUNT=your_account
-SNOWFLAKE_USER=your_username
-SNOWFLAKE_PASSWORD=your_password
-SNOWFLAKE_ROLE=your_role
-SNOWFLAKE_WAREHOUSE=your_warehouse
-SNOWFLAKE_DATABASE=your_database
-SNOWFLAKE_SCHEMA=RAW
-```
-
-
-### 5. Generate dbt Manifest
-
-cd dbt/bike_share_dbt
-dbt compile
-
-
-### 6. Start Dagster
-
-From project root:
+### 2. Run Dagster
 
 dagster dev
 
 
-Access UI at:
+Open:
+
 http://127.0.0.1:3000
+
+
+Materialize assets to run the full pipeline.
+
+---
+
+### 3. Run dbt Independently
+
+From dbt project directory:
+
+dbt run
+dbt test
+dbt build
 
 
 ---
 
-## Business Insights Enabled
+## Snowflake Setup
 
-The mart layer enables:
+Ensure the following:
 
-- Overall ride activity trends (daily, weekly, monthly)
-- Peak usage hours and seasonal patterns
-- User behavior analysis (Subscriber vs Customer)
-- Demographic analysis by birth year and gender
-- Station popularity and route frequency
-- Bike utilization and maintenance insights
-- Ride duration distribution analysis
+- Correct Snowflake account credentials
+- Profiles configured in:
+
+C:\Users<your_username>.dbt\profiles.yml
+
+
+- Schemas exist:
+  - RAW
+  - STAGING
+  - INTERMEDIATE
+  - MART
+
+---
+
+## Key Features
+
+- End-to-end orchestration with Dagster
+- Layered data modeling best practices
+- Automated data validation
+- Incremental models
+- Clean separation of ingestion and transformation
+- Production-style structure

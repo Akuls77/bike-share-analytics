@@ -6,7 +6,6 @@ with base as (
 )
 
 select
-    ride_date,
     user_type,
     gender,
     age_group,
@@ -17,7 +16,6 @@ select
 
 from base
 group by
-    ride_date,
     user_type,
     gender,
     age_group

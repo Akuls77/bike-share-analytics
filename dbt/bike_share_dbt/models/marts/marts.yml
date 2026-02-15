@@ -1,0 +1,39 @@
+version: 2
+
+models:
+
+  - name: fact_ride_activity_trends
+    columns:
+      - name: ride_date
+        tests: [not_null]
+
+      - name: total_rides
+        tests: [not_null]
+
+  - name: fact_user_behavior
+    columns:
+      - name: user_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Subscriber', 'Customer']
+
+  - name: fact_station_popularity
+    columns:
+      - name: start_station_id
+        tests: [not_null]
+
+  - name: fact_ride_duration_analysis
+    columns:
+      - name: avg_duration
+        tests: [not_null]
+
+  - name: fact_bike_usage
+    columns:
+      - name: bike_id
+        tests: [not_null]
+
+  - name: fact_route_analysis
+    columns:
+      - name: start_station_id
+        tests: [not_null]

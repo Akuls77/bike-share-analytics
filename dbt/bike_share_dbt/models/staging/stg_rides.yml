@@ -2,9 +2,8 @@ version: 2
 
 models:
   - name: stg_rides
-    description: "Cleaned and typed bike rides data"
-
     columns:
+
       - name: trip_duration_sec
         tests:
           - not_null
@@ -20,9 +19,11 @@ models:
       - name: user_type
         tests:
           - accepted_values:
-              values: ['Subscriber', 'Customer']
+              arguments:
+                values: ['Subscriber', 'Customer']
 
       - name: gender
         tests:
           - accepted_values:
-              values: [0, 1, 2]
+              arguments:
+                values: [0, 1, 2]
