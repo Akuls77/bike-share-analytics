@@ -8,17 +8,17 @@ from .dbt_assets import (
     dbt_resource
 )
 from .resources import snowflake_connection
-from .jobs import ingestion_job, transformation_job, full_pipeline_job
-from .schedules import weekly_pipeline_schedule
-from .sensors import file_change_sensor
+from .jobs import ingestion_job, transformation_job
+from .schedules import daily_transformation_schedule
+from .sensors import file_change_sensor, ingestion_completion_sensor
 
 defs = Definitions(
     assets=[
         load_raw_bike_rides,
-        *rds_dbt_assets,
-        *cds_dbt_assets,
-        *dds_dbt_assets,
-        *ids_dbt_assets,
+        rds_dbt_assets,
+        cds_dbt_assets,
+        dds_dbt_assets,
+        ids_dbt_assets,
     ],
     resources={
         "snowflake_connection": snowflake_connection,
@@ -27,8 +27,7 @@ defs = Definitions(
     jobs=[
         ingestion_job,
         transformation_job,
-        full_pipeline_job,
     ],
-    schedules=[weekly_pipeline_schedule],
-    sensors=[file_change_sensor],
+    schedules=[daily_transformation_schedule],
+    sensors=[file_change_sensor, ingestion_completion_sensor],
 )
