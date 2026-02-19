@@ -3,10 +3,6 @@ from .jobs import transformation_job
 
 @sensor(job=transformation_job)
 def raw_success_sensor(context):
-    """
-    Triggers transformation job only after RAW ingestion succeeds.
-    """
-
     records = context.instance.get_run_records(limit=5)
 
     for record in records:
