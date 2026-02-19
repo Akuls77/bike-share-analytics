@@ -15,7 +15,7 @@ dbt/dbt_packages/
 .env
 
 # Data
-data/raw_csv/*.csv
+data/*.csv
 
 .tmp_dagster_home_*/
 *.db
