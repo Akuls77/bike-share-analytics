@@ -1,7 +1,7 @@
 from dagster import ScheduleDefinition
-from .jobs import full_pipeline_job
+from .jobs import transformation_job
 
-two_hour_schedule = ScheduleDefinition(
-    job=full_pipeline_job,
-    cron_schedule="0 */2 * * *",
+daily_transformation_schedule = ScheduleDefinition(
+    job=transformation_job,
+    cron_schedule="0 17 * * *",  # 5 PM daily
 )

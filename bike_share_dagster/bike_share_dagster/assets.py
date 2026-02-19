@@ -1,7 +1,7 @@
 from dagster import asset
 from .config import DataPaths
 
-@asset(required_resource_keys={"snowflake_connection"})
+@asset(group_name="rds", required_resource_keys={"snowflake_connection"})
 def load_raw_bike_rides(context):
 
     conn = context.resources.snowflake_connection
