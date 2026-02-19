@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: dds_dim_bike
+    columns:
+      - name: bike_sk
+        tests:
+          - unique
+          - not_null
+      - name: bike_id
+        tests:
+          - not_null

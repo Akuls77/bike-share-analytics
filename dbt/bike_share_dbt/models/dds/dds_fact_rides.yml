@@ -1,0 +1,38 @@
+version: 2
+
+models:
+  - name: dds_fact_rides
+    columns:
+      - name: ride_sk
+        tests:
+          - unique
+          - not_null
+
+      - name: user_sk
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dds_dim_user')
+                field: user_sk
+
+      - name: bike_sk
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dds_dim_bike')
+                field: bike_sk
+
+      - name: start_station_sk
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dds_dim_station')
+                field: station_sk
+
+      - name: end_station_sk
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dds_dim_station')
+                field: station_sk

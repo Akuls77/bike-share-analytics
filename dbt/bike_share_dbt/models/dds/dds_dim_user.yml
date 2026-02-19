@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: dds_dim_user
+    columns:
+      - name: user_sk
+        tests:
+          - unique
+          - not_null

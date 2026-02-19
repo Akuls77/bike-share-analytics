@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: dds_dim_route
+    columns:
+      - name: route_sk
+        tests:
+          - unique
+          - not_null
