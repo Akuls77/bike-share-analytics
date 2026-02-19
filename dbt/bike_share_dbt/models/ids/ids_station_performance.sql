@@ -5,10 +5,10 @@
 ) }}
 
 SELECT
-    b.bike_id,
-    COUNT(*) AS total_rides,
+    s.station_name,
+    COUNT(*) AS total_starts,
     AVG(f.trip_duration_in_min) AS avg_duration_min
 FROM {{ ref('dds_fact_rides') }} f
-JOIN {{ ref('dds_dim_bike') }} b
-    ON f.bike_sk = b.bike_sk
-GROUP BY b.bike_id
+JOIN {{ ref('dds_dim_station') }} s
+    ON f.start_station_sk = s.station_sk
+GROUP BY s.station_name

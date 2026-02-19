@@ -1,15 +1,15 @@
 version: 2
 
 models:
-  - name: ids_bike_utilization
-    description: "Bike-level ride frequency and duration metrics"
+  - name: ids_station_performance
+    description: "Station-level performance metrics based on ride start frequency"
 
     columns:
-      - name: bike_id
+      - name: station_name
         tests:
           - not_null
 
-      - name: total_rides
+      - name: total_starts
         tests:
           - not_null
 

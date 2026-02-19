@@ -1,0 +1,31 @@
+version: 2
+
+models:
+  - name: ids_ride_activity_trends
+    description: "Daily aggregated ride activity trends"
+
+    columns:
+      - name: ride_date
+        tests:
+          - not_null
+
+      - name: ride_year
+        tests:
+          - not_null
+
+      - name: ride_month
+        tests:
+          - not_null
+
+      - name: season
+        tests:
+          - accepted_values:
+              values: ['Winter','Spring','Summer','Fall','Unknown']
+
+      - name: total_rides
+        tests:
+          - not_null
+
+      - name: avg_trip_duration_min
+        tests:
+          - not_null

@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: ids_user_behavior_summary
+    description: "Aggregated user behavior metrics across user type, gender, and age group"
+
+    columns:
+      - name: user_type
+        tests:
+          - not_null
+
+      - name: gender
+        tests:
+          - accepted_values:
+              values: ['Male','Female','Unknown']
+
+      - name: age_group
+        tests:
+          - not_null
+
+      - name: total_rides
+        tests:
+          - not_null
+
+      - name: avg_duration_min
+        tests:
+          - not_null

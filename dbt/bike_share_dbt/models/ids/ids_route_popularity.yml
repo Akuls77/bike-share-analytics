@@ -1,11 +1,15 @@
 version: 2
 
 models:
-  - name: ids_bike_utilization
-    description: "Bike-level ride frequency and duration metrics"
+  - name: ids_route_popularity
+    description: "Route-level ride frequency and average duration"
 
     columns:
-      - name: bike_id
+      - name: start_station_id
+        tests:
+          - not_null
+
+      - name: end_station_id
         tests:
           - not_null
 
