@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: rds
+    database: BIKE_SHARE_DB
+    schema: RDS
+    tables:
+      - name: raw_bike_rides
+        description: "Raw bike share data loaded via Dagster ingestion pipeline"
+        columns:
+          - name: trip_duration
+            tests:
+              - not_null
+          - name: start_time
+            tests:
+              - not_null
+          - name: stop_time
+            tests:
+              - not_null
