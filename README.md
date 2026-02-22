@@ -11,7 +11,7 @@ This project demonstrates a complete modern data engineering architecture using 
 
 ---
 
-# Architecture Overview
+## Architecture Overview
 
 Raw CSV  
 ↓  
@@ -27,9 +27,9 @@ Each layer is independently modeled, versioned, tested, and orchestrated.
 
 ---
 
-# Data Layering Strategy
+## Data Layering Strategy
 
-## 1. RDS – Raw Data Store
+### 1. RDS – Raw Data Store
 
 Purpose  
 Stores raw data exactly as received from the source system.
@@ -52,7 +52,7 @@ Design Characteristics
 
 ---
 
-## 2. CDS – Cleansed Data Store
+### 2. CDS – Cleansed Data Store
 
 Purpose  
 Standardizes and cleans raw data before dimensional modeling.
@@ -73,7 +73,7 @@ Each dbt model is automatically registered as a separate Dagster asset.
 
 ---
 
-## 3. DDS – Data Domains Store
+### 3. DDS – Data Domains Store
 
 Purpose  
 Implements star schema modeling for analytical workloads.
@@ -88,7 +88,7 @@ This layer is optimized for BI consumption and analytical queries.
 
 ---
 
-## 4. IDS – Insights Data Store
+### 4. IDS – Insights Data Store
 
 Purpose  
 Provides business-ready aggregated and summary datasets.
@@ -103,7 +103,7 @@ This layer supports reporting and dashboard consumption.
 
 ---
 
-# Orchestration Strategy
+## Orchestration Strategy
 
 Orchestration is handled using Dagster with strict layer sequencing.
 
@@ -119,7 +119,7 @@ This is implemented using success-based sensors.
 
 ---
 
-# Asset Structure in Dagster
+## Asset Structure in Dagster
 
 Dagster registers:
 
@@ -134,14 +134,14 @@ Dependencies are automatically derived from the dbt manifest.
 
 ---
 
-# Scheduling and Sensors
+## Scheduling and Sensors
 
-## Schedule
+### Schedule
 
 - CDS job runs daily at 5:00 PM IST.
 - Configured via Dagster ScheduleDefinition.
 
-## Sensors
+### Sensors
 
 - CDS success triggers DDS.
 - DDS success triggers IDS.
@@ -152,7 +152,7 @@ This provides both scheduled execution and event-driven chaining.
 
 ---
 
-# Technology Stack
+## Technology Stack
 
 | Tool       | Purpose                    |
 |------------|----------------------------|
@@ -163,31 +163,30 @@ This provides both scheduled execution and event-driven chaining.
 
 ---
 
-# Setup Instructions
+## Setup Instructions
 
-## 1. Clone the Repository
+### 1. Clone the Repository
 
 git clone <your-repository-url>
 cd Bike-Share-Analytics
 
 ---
 
-## 2. Create Virtual Environment
+### 2. Create Virtual Environment
 
-### Windows
+#### Windows
 
 python -m venv venv
 venv\Scripts\activate
 
-
-### macOS / Linux
+#### macOS / Linux
 
 python3 -m venv venv
 source venv/bin/activate
 
 ---
 
-## 3. Install Dependencies from requirements.txt
+### 3. Install Dependencies from requirements.txt
 
 Make sure `requirements.txt` exists at the project root.
 
@@ -205,7 +204,7 @@ This will install:
 
 ---
 
-## 4. Build dbt Project (First Time)
+### 4. Build dbt Project (First Time)
 
 cd dbt/bike_share_dbt
 dbt clean
@@ -213,7 +212,7 @@ dbt build
 
 ---
 
-## 5. Start Dagster
+### 5. Start Dagster
 
 cd bike_share_dagster
 dagster dev
@@ -225,7 +224,7 @@ http://127.0.0.1:3000
 
 ---
 
-# Execution Flow Example
+## Execution Flow Example
 
 RAW_BIKE_RIDES
 ↓
