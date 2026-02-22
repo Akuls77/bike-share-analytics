@@ -4,7 +4,7 @@ models:
   - name: cds_rides_cleaned
     description: "Cleaned and standardized bike rides data"
     columns:
-      - name: trip_duration
+      - name: trip_duration_in_sec
         tests:
           - not_null
       - name: start_time
@@ -16,4 +16,5 @@ models:
       - name: gender
         tests:
           - accepted_values:
-              values: ['Male', 'Female', 'Unknown']
+              arguments:
+                values: ['Male', 'Female', 'Unknown']

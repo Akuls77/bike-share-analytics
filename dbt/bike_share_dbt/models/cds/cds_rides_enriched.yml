@@ -10,7 +10,7 @@ models:
       - name: season
         tests:
           - accepted_values:
-              values: ['Winter','Spring','Summer','Fall','Unknown']
-      - name: ride_hour
+              values: ['Winter','Monsoon','Summer','Unknown']
+      - name: is_weekend
         tests:
           - not_null

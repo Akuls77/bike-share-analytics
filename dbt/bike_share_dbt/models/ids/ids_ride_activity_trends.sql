@@ -6,8 +6,6 @@
 
 SELECT
     ride_date,
-    ride_year,
-    ride_month,
     season,
     is_weekend,
     COUNT(*) AS total_rides,
@@ -15,7 +13,5 @@ SELECT
 FROM {{ ref('dds_fact_rides') }}
 GROUP BY
     ride_date,
-    ride_year,
-    ride_month,
     season,
     is_weekend

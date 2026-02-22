@@ -2,17 +2,27 @@ version: 2
 
 models:
   - name: ids_bike_utilization
-    description: "Bike-level ride frequency and duration metrics"
+    description: "Bike-level utilization metrics including ride count and usage category"
 
     columns:
       - name: bike_id
+        description: "Business identifier for bike"
         tests:
           - not_null
 
       - name: total_rides
+        description: "Total number of rides completed by the bike"
         tests:
           - not_null
 
-      - name: avg_duration_min
+      - name: avg_trip_duration_min
+        description: "Average trip duration in minutes per bike"
         tests:
           - not_null
+
+      - name: usage_category
+        description: "Categorized bike usage based on ride count"
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['High Usage','Medium Usage','Low Usage']

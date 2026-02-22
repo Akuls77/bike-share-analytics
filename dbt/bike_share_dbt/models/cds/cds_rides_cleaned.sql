@@ -14,7 +14,6 @@ WITH base AS (
 cleaned AS (
 
     SELECT
-        trip_duration,
         start_time,
         stop_time,
         start_station_id,
@@ -29,13 +28,11 @@ cleaned AS (
         user_type,
         CAST(birth_year AS INTEGER) AS birth_year,
         {{ map_gender('gender') }} AS gender,
-        trip_duration_in_min
+        trip_duration_in_min,
+        trip_duration AS trip_duration_in_sec        
 
     FROM base
-    WHERE trip_duration > 0
-      AND start_time IS NOT NULL
-      AND stop_time IS NOT NULL
-
+    
 )
 
 SELECT * FROM cleaned
