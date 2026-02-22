@@ -2,15 +2,31 @@ version: 2
 
 models:
   - name: cds_rides_enriched
-    description: "Enriched bike ride data with demographic and time-based attributes"
+    description: "Enriched ride data with derived date, season, and demographic attributes"
+
     columns:
-      - name: age_group
+      - name: ride_date
         tests:
           - not_null
+
+      - name: ride_year
+        tests:
+          - not_null
+
+      - name: ride_month
+        tests:
+          - not_null
+
       - name: season
         tests:
           - accepted_values:
-              values: ['Winter','Monsoon','Summer','Unknown']
+              arguments:
+                values: ['Winter','Summer','Monsoon','Unknown']
+
+      - name: age_group
+        tests:
+          - not_null
+
       - name: is_weekend
         tests:
           - not_null

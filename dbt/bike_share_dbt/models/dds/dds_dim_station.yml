@@ -2,11 +2,14 @@ version: 2
 
 models:
   - name: dds_dim_station
+    description: "Station dimension table"
+
     columns:
       - name: station_sk
         tests:
-          - unique
           - not_null
+          - unique
+
       - name: station_id
         tests:
           - not_null

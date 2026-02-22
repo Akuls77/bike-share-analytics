@@ -1,19 +1,27 @@
 version: 2
 
-sources:
-  - name: rds
-    database: BIKE_SHARE_DB
-    schema: RDS
-    tables:
-      - name: raw_bike_rides
-        description: "Raw bike share data loaded via Dagster ingestion pipeline"
-        columns:
-          - name: trip_duration
-            tests:
-              - not_null
-          - name: start_time
-            tests:
-              - not_null
-          - name: stop_time
-            tests:
-              - not_null
+models:
+  - name: rds_bike_rides
+    description: "Raw bike rides loaded from CSV into Snowflake RDS layer"
+
+    columns:
+      - name: trip_duration
+        description: "Trip duration in seconds from source file"
+        tests:
+          - not_null
+
+      - name: start_time
+        tests:
+          - not_null
+
+      - name: stop_time
+        tests:
+          - not_null
+
+      - name: bike_id
+        tests:
+          - not_null
+
+      - name: user_type
+        tests:
+          - not_null

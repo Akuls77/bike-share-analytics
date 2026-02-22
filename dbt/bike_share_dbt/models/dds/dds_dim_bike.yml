@@ -2,11 +2,15 @@ version: 2
 
 models:
   - name: dds_dim_bike
+    description: "Bike dimension table"
+
     columns:
       - name: bike_sk
         tests:
-          - unique
           - not_null
+          - unique
+
       - name: bike_id
         tests:
           - not_null
+          - unique

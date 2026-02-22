@@ -2,19 +2,27 @@ version: 2
 
 models:
   - name: cds_rides_cleaned
-    description: "Cleaned and standardized bike rides data"
+    description: "Cleaned and standardized ride data"
+
     columns:
-      - name: trip_duration_in_sec
-        tests:
-          - not_null
       - name: start_time
         tests:
           - not_null
+
       - name: stop_time
         tests:
           - not_null
+
+      - name: trip_duration_in_sec
+        tests:
+          - not_null
+
+      - name: trip_duration_in_min
+        tests:
+          - not_null
+
       - name: gender
         tests:
           - accepted_values:
               arguments:
-                values: ['Male', 'Female', 'Unknown']
+                values: ['Male','Female','Unknown']

@@ -2,8 +2,10 @@ version: 2
 
 models:
   - name: dds_dim_route
+    description: "Route dimension between start and end stations"
+
     columns:
       - name: route_sk
         tests:
-          - unique
           - not_null
+          - unique
