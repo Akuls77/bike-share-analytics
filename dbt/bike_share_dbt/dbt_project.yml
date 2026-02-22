@@ -13,18 +13,19 @@ snapshot-paths: ["snapshots"]
 
 models:
   bike_share_dbt:
+
     rds:
       +schema: RDS
-      +materialized: table
+      +tags: ["rds"]
 
     cds:
       +schema: CDS
-      +materialized: view
+      +tags: ["cds"]
 
     dds:
       +schema: DDS
-      +materialized: table
+      +tags: ["dds"]
 
     ids:
       +schema: IDS
-      +materialized: table
+      +tags: ["ids"]

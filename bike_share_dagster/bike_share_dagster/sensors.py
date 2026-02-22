@@ -1,39 +1,48 @@
-import os
-from dagster import sensor, RunRequest
-from .jobs import ingestion_job, transformation_job
-from .config import DataPaths
+from dagster import sensor, RunRequest, DagsterRunStatus
+from .jobs import cds_job, dds_job, ids_job
 
-LAST_MODIFIED = None
 
-@sensor(job=ingestion_job)
-def file_change_sensor(context):
+@sensor(job=dds_job)
+def cds_success_sensor(context):
 
-    global LAST_MODIFIED
+    runs = context.instance.get_runs(
+        filters={"job_name": "cds_job"},
+        limit=1,
+    )
 
-    file_path = DataPaths.RAW_CSV_PATH
-
-    if not os.path.exists(file_path):
+    if not runs:
         return
 
-    current_modified = os.path.getmtime(file_path)
+    latest_run = runs[0]
 
-    if LAST_MODIFIED is None:
-        LAST_MODIFIED = current_modified
+    if latest_run.status == DagsterRunStatus.SUCCESS:
+        run_key = f"dds_after_{latest_run.run_id}"
+
+        if context.cursor == run_key:
+            return
+
+        context.update_cursor(run_key)
+        yield RunRequest(run_key=run_key)
+
+
+@sensor(job=ids_job)
+def dds_success_sensor(context):
+
+    runs = context.instance.get_runs(
+        filters={"job_name": "dds_job"},
+        limit=1,
+    )
+
+    if not runs:
         return
 
-    if current_modified > LAST_MODIFIED:
-        LAST_MODIFIED = current_modified
-        yield RunRequest(run_key=f"ingestion_{current_modified}")
+    latest_run = runs[0]
 
-@sensor(job=transformation_job)
-def ingestion_completion_sensor(context):
+    if latest_run.status == DagsterRunStatus.SUCCESS:
+        run_key = f"ids_after_{latest_run.run_id}"
 
-    records = context.instance.get_run_records(limit=1)
+        if context.cursor == run_key:
+            return
 
-    if not records:
-        return
-
-    last_run = records[0].dagster_run
-
-    if last_run.job_name == "ingestion_job" and last_run.status.value == "SUCCESS":
-        yield RunRequest(run_key=f"transform_after_{last_run.run_id}")
+        context.update_cursor(run_key)
+        yield RunRequest(run_key=run_key)

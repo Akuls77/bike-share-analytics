@@ -1,11 +1,17 @@
-from dagster import define_asset_job, AssetSelection
+from dagster import define_asset_job
+from .dbt_assets import cds_dbt_assets, dds_dbt_assets, ids_dbt_assets
 
-ingestion_job = define_asset_job(
-    name="ingestion_job",
-    selection=AssetSelection.groups("rds")
+cds_job = define_asset_job(
+    name="cds_job",
+    selection=[cds_dbt_assets],
 )
 
-transformation_job = define_asset_job(
-    name="transformation_job",
-    selection=AssetSelection.groups("cds", "dds", "ids")
+dds_job = define_asset_job(
+    name="dds_job",
+    selection=[dds_dbt_assets],
+)
+
+ids_job = define_asset_job(
+    name="ids_job",
+    selection=[ids_dbt_assets],
 )
