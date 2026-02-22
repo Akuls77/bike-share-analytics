@@ -221,18 +221,3 @@ dagster dev
 Open in browser:
 
 http://127.0.0.1:3000
-
----
-
-## Execution Flow Example
-
-RAW_BIKE_RIDES
-↓
-cds_rides_cleaned
-↓
-dds_fact_rides
-↓
-ids_station_performance
-
-
-All dependencies are derived automatically from the dbt DAG.
