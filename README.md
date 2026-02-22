@@ -109,7 +109,7 @@ Orchestration is handled using Dagster with strict layer sequencing.
 
 Execution Model:
 
-1. CDS layer runs daily at 5 PM IST.
+1. CDS layer runs daily after 2 hours.
 2. On successful completion of CDS:
    - DDS layer is triggered.
 3. On successful completion of DDS:
