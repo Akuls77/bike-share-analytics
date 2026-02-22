@@ -10,8 +10,8 @@ SELECT
     AVG(f.trip_duration_in_min) AS avg_trip_duration_min,
 
     CASE 
-        WHEN COUNT(*) > 1500 THEN 'High Usage'
-        WHEN COUNT(*) BETWEEN 500 AND 1500 THEN 'Medium Usage'
+        WHEN COUNT(*) > 500 THEN 'High Usage'
+        WHEN COUNT(*) BETWEEN 100 AND 500 THEN 'Medium Usage'
         ELSE 'Low Usage'
     END AS usage_category
 
