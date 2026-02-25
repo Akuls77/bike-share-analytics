@@ -26,12 +26,8 @@ SELECT
     b.bike_sk,
     r.route_sk,
 
-    bse.trip_duration_in_sec,
     bse.trip_duration_in_min,
     bse.ride_date,
-    bse.ride_hour,
-    bse.ride_month,
-    bse.ride_year,
     bse.season,
     bse.is_weekend
 

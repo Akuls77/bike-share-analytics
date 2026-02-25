@@ -1,6 +1,7 @@
 from dagster import asset
 from .config import DataPaths
 
+
 @asset(
     group_name="rds",
     required_resource_keys={"snowflake_connection"},
@@ -78,27 +79,26 @@ def load_raw_bike_rides(context):
         context.log.info("Copying data into RAW table...")
 
         cursor.execute("""
-            COPY INTO RDS.RAW_BIKE_RIDES
-            FROM (
-                SELECT
-                    t.$2,
-                    t.$3,
-                    t.$4,
-                    t.$5,
-                    t.$6,
-                    t.$7,
-                    t.$8,
-                    t.$9,
-                    t.$10,
-                    t.$11,
-                    t.$12,
-                    t.$13,
-                    t.$14,
-                    t.$15,
-                    t.$16,
-                    t.$17
-                FROM @RDS.BIKE_STAGE t
+            COPY INTO RDS.RAW_BIKE_RIDES (
+                trip_duration,
+                start_time,
+                stop_time,
+                start_station_id,
+                start_station_name,
+                start_station_latitude,
+                start_station_longitude,
+                end_station_id,
+                end_station_name,
+                end_station_latitude,
+                end_station_longitude,
+                bike_id,
+                user_type,
+                birth_year,
+                gender,
+                trip_duration_in_min
             )
+            FROM @RDS.BIKE_STAGE
+            FILE_FORMAT = (FORMAT_NAME = RDS.BIKE_CSV_FORMAT)
         """)
 
         context.log.info("Initial ingestion completed successfully.")

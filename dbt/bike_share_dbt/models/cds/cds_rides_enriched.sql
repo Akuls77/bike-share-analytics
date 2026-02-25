@@ -16,10 +16,8 @@ derived AS (
     SELECT
         *,
         {{ calculate_age('birth_year') }} AS age,
-        EXTRACT(HOUR FROM start_time) AS ride_hour,
         CAST(start_time AS DATE) AS ride_date,
-        EXTRACT(MONTH FROM start_time) AS ride_month,
-        EXTRACT(YEAR FROM start_time) AS ride_year
+        EXTRACT(MONTH FROM start_time) AS ride_month
 
     FROM base
 

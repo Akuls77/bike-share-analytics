@@ -2,17 +2,21 @@ version: 2
 
 models:
   - name: ids_station_performance
-    description: "Station-level performance metrics based on ride start frequency"
+    description: "Station level operational performance including departures, arrivals and net flow"
 
     columns:
       - name: station_name
         tests:
           - not_null
 
-      - name: total_starts
+      - name: total_departures
         tests:
           - not_null
 
-      - name: avg_duration_min
+      - name: total_arrivals
+        tests:
+          - not_null
+
+      - name: net_flow
         tests:
           - not_null

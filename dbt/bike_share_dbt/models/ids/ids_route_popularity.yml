@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: ids_route_popularity
-    description: "Route-level ride frequency and average duration"
+    description: "Route demand metrics including demand density and distance coverage"
 
     columns:
       - name: start_station_id
@@ -13,10 +13,17 @@ models:
         tests:
           - not_null
 
+      - name: route_category
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Short', 'Medium', 'Long']
+
       - name: total_rides
         tests:
           - not_null
 
-      - name: avg_duration_min
+
+      - name: total_distance_km
         tests:
           - not_null

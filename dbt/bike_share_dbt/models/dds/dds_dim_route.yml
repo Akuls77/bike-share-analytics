@@ -7,5 +7,23 @@ models:
     columns:
       - name: route_sk
         tests:
-          - not_null
           - unique
+          - not_null
+
+      - name: start_station_id
+        tests:
+          - not_null
+
+      - name: end_station_id
+        tests:
+          - not_null
+
+      - name: distance_km
+        tests:
+          - not_null
+
+      - name: route_category
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Short','Medium','Long']

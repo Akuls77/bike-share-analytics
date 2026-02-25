@@ -1,29 +1,25 @@
 # Bike Share Analytics Platform
 
-A production-style layered data pipeline built using:
+A layered data pipeline built using:
 
-- Snowflake – Data warehouse
-- dbt – SQL-based transformations (RDS → CDS → DDS → IDS)
-- Dagster – Orchestration and scheduling
-- Python – Raw data ingestion
-
-This project demonstrates a complete modern data engineering architecture using strict layer separation, idempotent ingestion, and success-based orchestration.
+* Snowflake – Cloud Data Warehouse
+* dbt – SQL-based transformations (RDS → CDS → DDS → IDS)
+* Dagster – Orchestration, scheduling, and monitoring
+* Python – Raw data ingestion
 
 ---
 
 ## Architecture Overview
 
-Raw CSV  
-↓  
-RDS (Raw Data Store)  
-↓  
-CDS (Cleansed Data Store)  
-↓  
-DDS (Dimensional Data Store)  
-↓  
-IDS (Information Delivery Store)  
-
-Each layer is independently modeled, versioned, tested, and orchestrated.
+Raw CSV
+↓
+RDS (Raw Data Store)
+↓
+CDS (Cleansed Data Store)
+↓
+DDS (Dimensional Data Store)
+↓
+IDS (Information Delivery Store)
 
 ---
 
@@ -31,72 +27,98 @@ Each layer is independently modeled, versioned, tested, and orchestrated.
 
 ### 1. RDS – Raw Data Store
 
-Purpose  
+Purpose
 Stores raw data exactly as received from the source system.
 
-Technology  
-- Python ingestion logic  
-- Snowflake table: `RAW_BIKE_RIDES`
+Technology
 
-Dagster Group  
+* Python ingestion asset
+* Snowflake table: `RAW_BIKE_RIDES`
+
+Dagster Group
 `rds`
 
-Asset  
-- `load_raw_bike_rides`
+Asset
 
-Design Characteristics  
-- Ingestion is idempotent.
-- If the table already exists, ingestion is skipped.
-- Prevents duplicate loading.
-- Designed for static source data.
+* `load_raw_bike_rides`
 
 ---
 
 ### 2. CDS – Cleansed Data Store
 
-Purpose  
-Standardizes and cleans raw data before dimensional modeling.
+Purpose
+Standardizes and enriches raw data before dimensional modeling.
 
-Typical Transformations  
-- Data type casting  
-- Null handling  
-- Column normalization  
-- Basic enrichment  
+Typical Transformations
 
-Technology  
-- dbt models tagged `cds`
+* Data type casting
+* Null handling
+* Column normalization
+* Derived fields (age, season, weekend flag)
 
-Dagster Group  
+Technology
+
+* dbt models tagged `cds`
+
+Dagster Group
 `cds`
 
-Each dbt model is automatically registered as a separate Dagster asset.
+Each dbt model is registered as an individual Dagster asset.
 
 ---
 
-### 3. DDS – Data Domains Store
+### 3. DDS – Dimensional Data Store
 
-Purpose  
+Purpose
 Implements star schema modeling for analytical workloads.
 
-Technology  
-- dbt dimensional models tagged `dds`
+Components
 
-Dagster Group  
+* `dds_fact_rides`
+* `dds_dim_user`
+* `dds_dim_bike`
+* `dds_dim_station`
+* `dds_dim_route`
+
+Key Features
+
+* Surrogate key generation
+* Distance calculation (km)
+* Route categorization
+
+Technology
+
+* dbt models tagged `dds`
+
+Dagster Group
 `dds`
 
-This layer is optimized for BI consumption and analytical queries.
+This layer is optimized for analytical queries and BI tools.
 
 ---
 
 ### 4. IDS – Insights Data Store
 
-Purpose  
-Provides business-ready aggregated and summary datasets.
+Purpose
+Provides business-ready aggregated datasets.
 
-Technology  
-- dbt aggregation models tagged `ids`
+Examples
 
-Dagster Group  
+* `ids_bike_utilization`
+* `ids_station_performance`
+* `ids_user_behavior`
+* `ids_daily_metrics`
+
+Key Features
+
+* Total and average measures
+* Business-oriented aggregations
+
+Technology
+
+* dbt models tagged `ids`
+
+Dagster Group
 `ids`
 
 This layer supports reporting and dashboard consumption.
@@ -105,17 +127,23 @@ This layer supports reporting and dashboard consumption.
 
 ## Orchestration Strategy
 
-Orchestration is handled using Dagster with strict layer sequencing.
+Orchestration is handled using Dagster with strict layer sequencing and monitoring.
 
 Execution Model:
 
-1. CDS layer runs daily after 2 hours.
-2. On successful completion of CDS:
-   - DDS layer is triggered.
-3. On successful completion of DDS:
-   - IDS layer is triggered.
+1. A 2-hour schedule triggers the pipeline.
+2. RDS ingestion asset executes.
+3. CDS layer builds (`tag:cds`).
+4. On successful completion of CDS:
 
-This is implemented using success-based sensors.
+   * DDS layer is triggered via run status sensor.
+5. On successful completion of DDS:
+
+   * IDS layer is triggered via run status sensor.
+6. dbt tests execute automatically during each build.
+7. Analytics tables are refreshed.
+
+A global failure sensor monitors all runs and sends email alerts on pipeline failure.
 
 ---
 
@@ -123,12 +151,12 @@ This is implemented using success-based sensors.
 
 Dagster registers:
 
-- RDS group → Python ingestion asset
-- CDS group → All dbt CDS models
-- DDS group → All dbt DDS models
-- IDS group → All dbt IDS models
+* RDS group → Python ingestion asset
+* CDS group → All dbt CDS models
+* DDS group → All dbt DDS models
+* IDS group → All dbt IDS models
 
-Each dbt model becomes an individual asset.
+Each dbt model becomes an individual Dagster asset.
 
 Dependencies are automatically derived from the dbt manifest.
 
@@ -138,28 +166,28 @@ Dependencies are automatically derived from the dbt manifest.
 
 ### Schedule
 
-- CDS job runs daily at 5:00 PM IST.
-- Configured via Dagster ScheduleDefinition.
+* Pipeline runs every 2 hours.
+* Configured via `ScheduleDefinition`.
 
 ### Sensors
 
-- CDS success triggers DDS.
-- DDS success triggers IDS.
-- Sensors use strict success-based checks.
-- No layer runs unless the previous layer succeeds.
+* CDS success triggers DDS.
+* DDS success triggers IDS.
+* Global failure sensor sends email alerts.
+* No layer runs unless the previous layer succeeds.
 
-This provides both scheduled execution and event-driven chaining.
+This ensures both scheduled execution and event-driven chaining.
 
 ---
 
 ## Technology Stack
 
-| Tool       | Purpose                    |
-|------------|----------------------------|
-| Snowflake  | Data Warehouse             |
-| dbt        | SQL Transformations        |
-| Dagster    | Orchestration              |
-| Python     | Raw Ingestion              |
+| Tool      | Purpose                    |
+| --------- | -------------------------- |
+| Snowflake | Data Warehouse             |
+| dbt       | SQL Transformations        |
+| Dagster   | Orchestration & Monitoring |
+| Python    | Raw Ingestion              |
 
 ---
 
@@ -167,8 +195,10 @@ This provides both scheduled execution and event-driven chaining.
 
 ### 1. Clone the Repository
 
+```
 git clone <your-repository-url>
 cd Bike-Share-Analytics
+```
 
 ---
 
@@ -176,48 +206,57 @@ cd Bike-Share-Analytics
 
 #### Windows
 
+```
 python -m venv venv
 venv\Scripts\activate
+```
 
 #### macOS / Linux
 
+```
 python3 -m venv venv
 source venv/bin/activate
+```
 
 ---
 
-### 3. Install Dependencies from requirements.txt
+### 3. Install Dependencies
 
 Make sure `requirements.txt` exists at the project root.
 
-pip install --upgrade pip
+```
 pip install -r requirements.txt
+```
 
+This installs:
 
-This will install:
-- dagster
-- dagster-dbt
-- dbt-core
-- dbt-snowflake
-- snowflake-connector
-- and other required dependencies
+* dagster
+* dagster-dbt
+* dbt-core
+* dbt-snowflake
+* snowflake-connector
 
 ---
 
 ### 4. Build dbt Project (First Time)
 
+```
 cd dbt/bike_share_dbt
 dbt clean
 dbt build
+```
 
 ---
 
 ### 5. Start Dagster
 
+```
 cd bike_share_dagster
 dagster dev
-
+```
 
 Open in browser:
 
+```
 http://127.0.0.1:3000
+```

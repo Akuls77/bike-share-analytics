@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: ids_ride_activity_trends
-    description: "Daily aggregated ride activity trends"
+    description: "Daily ride activity aggregated by season and weekend flag"
 
     columns:
       - name: ride_date
@@ -13,9 +13,17 @@ models:
         tests:
           - accepted_values:
               arguments:
-                values: ['Winter','Summer','Monsoon','Unknown']
+                values: ['Winter', 'Summer', 'Monsoon', 'Unknown']
 
       - name: total_rides
+        tests:
+          - not_null
+
+      - name: total_trip_duration_min
+        tests:
+          - not_null
+
+      - name: total_distance_km
         tests:
           - not_null
 

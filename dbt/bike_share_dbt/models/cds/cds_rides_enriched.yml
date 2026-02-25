@@ -9,14 +9,6 @@ models:
         tests:
           - not_null
 
-      - name: ride_year
-        tests:
-          - not_null
-
-      - name: ride_month
-        tests:
-          - not_null
-
       - name: season
         tests:
           - accepted_values:

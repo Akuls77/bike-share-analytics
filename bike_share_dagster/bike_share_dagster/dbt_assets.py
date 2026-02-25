@@ -47,4 +47,5 @@ def dds_dbt_assets(context: AssetExecutionContext, dbt: DbtCliResource):
     dagster_dbt_translator=LayerTranslator("ids"),
 )
 def ids_dbt_assets(context: AssetExecutionContext, dbt: DbtCliResource):
+    #raise Exception("Intentional failure for sensor test")
     yield from dbt.cli(["build", "--select", "tag:ids"], context=context).stream()

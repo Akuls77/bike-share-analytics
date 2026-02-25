@@ -4,7 +4,7 @@ from .dbt_assets import cds_dbt_assets, dds_dbt_assets, ids_dbt_assets, dbt_reso
 from .resources import snowflake_connection
 from .jobs import cds_job, dds_job, ids_job
 from .schedules import daily_cds_schedule
-from .sensors import cds_success_sensor, dds_success_sensor
+from .sensors import cds_success_sensor, dds_success_sensor, pipeline_failure_sensor
 
 defs = Definitions(
     assets=[
@@ -19,5 +19,9 @@ defs = Definitions(
     },
     jobs=[cds_job, dds_job, ids_job],
     schedules=[daily_cds_schedule],
-    sensors=[cds_success_sensor, dds_success_sensor],
+    sensors=[
+        cds_success_sensor,
+        dds_success_sensor,
+        pipeline_failure_sensor,
+    ],
 )

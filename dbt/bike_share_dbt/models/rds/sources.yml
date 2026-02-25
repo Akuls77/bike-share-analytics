@@ -1,0 +1,48 @@
+version: 2
+
+sources:
+  - name: rds
+    description: "Raw Data Store schema containing ingested bike ride data"
+    database: "{{ target.database }}"
+    schema: RDS
+
+    tables:
+      - name: raw_bike_rides
+        description: "Raw bike ride data loaded from CSV via Dagster ingestion asset"
+
+        columns:
+          - name: trip_duration
+            description: "Trip duration in seconds"
+            tests:
+              - not_null
+
+          - name: start_time
+            description: "Ride start timestamp"
+            tests:
+              - not_null
+
+          - name: stop_time
+            description: "Ride stop timestamp"
+            tests:
+              - not_null
+
+          - name: start_station_id
+            description: "Starting station identifier"
+
+          - name: end_station_id
+            description: "Ending station identifier"
+
+          - name: bike_id
+            description: "Bike identifier"
+
+          - name: user_type
+            description: "Type of user (Subscriber / Customer)"
+
+          - name: birth_year
+            description: "Year of birth"
+
+          - name: gender
+            description: "Gender code"
+
+          - name: trip_duration_in_min
+            description: "Trip duration in minutes"
