@@ -6,16 +6,15 @@
 
 SELECT
     r.start_station_id,
-    r.end_station_id,
+    r.end_station_id,  
     r.route_category,
     r.distance_km,
     COUNT(*) AS total_rides,
     SUM(r.distance_km) AS total_distance_km,
-    (COUNT(*) / NULLIF(r.distance_km,0)) AS rides_per_km,
 
     CASE
-        WHEN COUNT(*) > 500 THEN 'High Demand'
-        WHEN COUNT(*) BETWEEN 250 AND 500 THEN 'Medium Demand'
+        WHEN SUM(r.distance_km) > 500 THEN 'High Demand'
+        WHEN SUM(r.distance_km) BETWEEN 200 AND 500 THEN 'Medium Demand'
         ELSE 'Low Demand'
     END AS demand_category
 

@@ -17,6 +17,3 @@ models:
         tests:
           - not_null
 
-      - name: net_flow
-        tests:
-          - not_null

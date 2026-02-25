@@ -34,12 +34,18 @@ SELECT
     d.station_name,
     d.total_departures,
     a.total_arrivals,
-    (a.total_arrivals - d.total_departures) AS net_flow,
 
     CASE
-        WHEN d.total_departures > 5000 THEN 'High Activity'
-        WHEN d.total_departures BETWEEN 1000 AND 5000 THEN 'Medium Activity'
-        ELSE 'Low Activity'
+        WHEN total_departures > 3500 AND total_arrivals > 3500
+            THEN 'High Departure / High Arrival'
+
+        WHEN total_departures > 3500 AND total_arrivals <= 3500
+            THEN 'High Departure / Low Arrival'
+
+        WHEN total_departures <= 3500 AND total_arrivals > 3500
+            THEN 'Low Departure / High Arrival'
+
+        ELSE 'Low Departure / Low Arrival'
     END AS activity_category
 
 FROM departures d
