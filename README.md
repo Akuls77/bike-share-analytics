@@ -9,20 +9,6 @@ A layered data pipeline built using:
 
 ---
 
-## Architecture Overview
-
-Raw CSV
-↓
-RDS (Raw Data Store)
-↓
-CDS (Cleansed Data Store)
-↓
-DDS (Dimensional Data Store)
-↓
-IDS (Information Delivery Store)
-
----
-
 ## Data Layering Strategy
 
 ### 1. RDS – Raw Data Store
@@ -34,9 +20,6 @@ Technology
 
 * Python ingestion asset
 * Snowflake table: `RAW_BIKE_RIDES`
-
-Dagster Group
-`rds`
 
 Asset
 
@@ -56,18 +39,12 @@ Typical Transformations
 * Column normalization
 * Derived fields (age, season, weekend flag)
 
-Technology
-
-* dbt models tagged `cds`
-
-Dagster Group
-`cds`
 
 Each dbt model is registered as an individual Dagster asset.
 
 ---
 
-### 3. DDS – Dimensional Data Store
+### 3. DDS – Data Domains Store
 
 Purpose
 Implements star schema modeling for analytical workloads.
@@ -85,13 +62,6 @@ Key Features
 * Surrogate key generation
 * Distance calculation (km)
 * Route categorization
-
-Technology
-
-* dbt models tagged `dds`
-
-Dagster Group
-`dds`
 
 This layer is optimized for analytical queries and BI tools.
 
@@ -113,13 +83,6 @@ Key Features
 
 * Total and average measures
 * Business-oriented aggregations
-
-Technology
-
-* dbt models tagged `ids`
-
-Dagster Group
-`ids`
 
 This layer supports reporting and dashboard consumption.
 
